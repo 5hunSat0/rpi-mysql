@@ -27,8 +27,9 @@ if [ "$1" = 'mysqld' ]; then
 		tempSqlFile='/tmp/mysql-first-time.sql'
 		cat > "$tempSqlFile" <<-EOSQL
 			DELETE FROM mysql.user ;
+                        SET old_passwords=0;
 			CREATE USER 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}' ;
-			GRANT ALL ON *.* TO 'root'@'%' WITH GRANT OPTION ;
+			GRANT ALL ON *.* TO 'root'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}' WITH GRANT OPTION ;
 			DROP DATABASE IF EXISTS test ;
 		EOSQL
 		
@@ -37,6 +38,7 @@ if [ "$1" = 'mysqld' ]; then
 		fi
 		
 		if [ "$MYSQL_USER" -a "$MYSQL_PASSWORD" ]; then
+
 			echo "CREATE USER '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD' ;" >> "$tempSqlFile"
 			
 			if [ "$MYSQL_DATABASE" ]; then
